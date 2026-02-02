@@ -1,0 +1,30 @@
+{
+  "description": "태그 스키마 정의 파일",
+  "tag_categories": {
+    "subject": {
+      "type": "string",
+      "required": true,
+      "description": "과목 (예: 수학, 영어 등)"
+    },
+    "grade": {
+      "type": "string",
+      "required": true,
+      "description": "학년 (예: 초5, 중1, 고2 등)"
+    },
+    "unit": {
+      "type": "string",
+      "required": false,
+      "description": "단원명"
+    },
+    "difficulty": {
+      "type": "string",
+      "required": false,
+      "description": "난이도 (킬, 상, 중, 하)"
+    },
+    "source": {
+      "type": "string",
+      "required": false,
+      "description": "출처 (교재명, 기출 등)"
+    }
+  }
+}

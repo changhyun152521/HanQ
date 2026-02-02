@@ -1,0 +1,12 @@
+{
+  "name": "ch-lms",
+  "private": true,
+  "description": "CH LMS - HanQ 데스크톱 앱 + 로그인 API 서버",
+  "scripts": {
+    "start": "cd auth_api && npm start",
+    "heroku-postbuild": "cd auth_api && npm install"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

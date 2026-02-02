@@ -1,0 +1,18 @@
+{
+  "name": "ch-lms-auth-api",
+  "version": "1.0.0",
+  "description": "HanQ 로그인/회원 API (MongoDB Atlas + Heroku)",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "mongodb": "^6.3.0"
+  }
+}

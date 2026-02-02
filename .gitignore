@@ -1,0 +1,22 @@
+# Auth API (Node)
+auth_api/node_modules/
+auth_api/.env
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.pytest_cache/
+.venv/
+venv/
+env/
+
+# IDE / OS
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Local DB
+db/*.db
+config/.hanq_session.json
