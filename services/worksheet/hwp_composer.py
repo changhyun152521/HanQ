@@ -14,6 +14,7 @@ HWP Composer (MVP)
 
 from __future__ import annotations
 
+import logging
 import os
 import sys
 import time
@@ -26,6 +27,9 @@ from utils.hwp_restore import HWPRestore
 from processors.hwp.hwp_reader import HWPReader
 
 
+logger = logging.getLogger(__name__)
+
+
 class WorksheetComposeError(Exception):
     pass
 
@@ -35,6 +39,7 @@ class WorksheetHwpComposer:
         self.db = db_connection
         self.restore = HWPRestore(db_connection)
         self.problem_repo = ProblemRepository(db_connection)
+        self._template_missing = False  # compose() 시 템플릿을 못 찾아 빈 문서로 생성했으면 True
 
     def _resolve_default_template_path(self) -> Optional[str]:
         """
@@ -872,6 +877,7 @@ class WorksheetHwpComposer:
         if not output_path:
             raise WorksheetComposeError("저장 경로가 비어있습니다.")
 
+        self._template_missing = False
         restored: List[Tuple[str, str]] = []
         try:
             restored = self._restore_all(problem_ids)
@@ -895,6 +901,14 @@ class WorksheetHwpComposer:
                     except Exception as e:
                         raise WorksheetComposeError(f"템플릿 HWP 열기 실패: {e}\n- path: {tpl}")
                 else:
+                    self._template_missing = True
+                    base_hint = os.path.dirname(sys.executable) if getattr(sys, "frozen", False) else "프로젝트 루트"
+                    logger.warning(
+                        "템플릿을 찾지 못해 빈 문서로 생성합니다. "
+                        "학습지/오답노트 서식을 쓰려면 exe와 같은 폴더에 templates 폴더(worksheet_template.hwp 포함)를 두세요. "
+                        "참고: exe 기준 폴더=%s",
+                        base_hint,
+                    )
                     try:
                         hwp.HAction.GetDefault("FileNew", hwp.HParameterSet.HFileOpenSave.HSet)
                         hwp.HAction.Execute("FileNew", hwp.HParameterSet.HFileOpenSave.HSet)

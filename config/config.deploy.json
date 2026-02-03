@@ -1,0 +1,18 @@
+{
+  "description": "배포용 설정 (Heroku 로그인 API 사용)",
+  "database": {
+    "path": "./db/ch_lms.db"
+  },
+  "login_api": {
+    "base_url": "https://hanq-ch-lms-99d87e53375f.herokuapp.com"
+  },
+  "hwp": {
+    "marker_start": "[문제시작]",
+    "marker_end": "[문제끝]",
+    "extract_text_during_parse": false
+  },
+  "ui": {
+    "window_width": 1200,
+    "window_height": 800
+  }
+}

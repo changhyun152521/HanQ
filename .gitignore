@@ -20,3 +20,8 @@ Thumbs.db
 # Local DB
 db/*.db
 config/.hanq_session.json
+config/config.json.bak
+
+# PyInstaller
+build/
+dist/

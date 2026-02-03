@@ -863,5 +863,14 @@ class WorksheetEditScreen(QWidget):
                 "option_difficulty_tag": bool(d.option_difficulty_tag),
             }
         )
-        QMessageBox.information(self, "완료", "HWP가 생성되었습니다.")
+        if getattr(composer, "_template_missing", False):
+            QMessageBox.information(
+                self,
+                "참고",
+                "HWP가 생성되었습니다.\n\n"
+                "이 PC에서 템플릿 파일을 찾지 못해 빈 문서로 생성되었습니다. "
+                "학습지 서식을 쓰려면 exe가 있는 폴더에 templates 폴더(worksheet_template.hwp 포함)를 두세요.",
+            )
+        else:
+            QMessageBox.information(self, "완료", "HWP가 생성되었습니다.")
 

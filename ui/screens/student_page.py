@@ -650,7 +650,16 @@ class StudentWorksheetListScreen(WorksheetListScreen):
                 show_warning(self, "오답노트", "오답노트 활성화에 실패했습니다.")
                 return
 
-        show_info(self, "오답노트", "오답노트를 생성했습니다. 오답노트 탭에서 HWP/PDF를 다운로드할 수 있습니다.")
+        if getattr(composer, "_template_missing", False):
+            show_info(
+                self,
+                "오답노트",
+                "오답노트를 생성했습니다. 오답노트 탭에서 HWP/PDF를 다운로드할 수 있습니다.\n\n"
+                "참고: 이 PC에서 템플릿 파일을 찾지 못해 빈 문서로 생성되었습니다. "
+                "학습지/오답노트 서식을 쓰려면 exe가 있는 폴더에 templates 폴더(worksheet_template.hwp 포함)를 두세요.",
+            )
+        else:
+            show_info(self, "오답노트", "오답노트를 생성했습니다. 오답노트 탭에서 HWP/PDF를 다운로드할 수 있습니다.")
         self.reload_from_db()
         self.wrongnote_ready.emit(worksheet_id)
 

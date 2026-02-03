@@ -5,11 +5,13 @@
 """
 import json
 import os
+import sys
 from datetime import datetime
 
 from PyQt5.QtWidgets import (QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
                              QScrollArea, QStackedWidget, QMessageBox, QDialog)
 from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QCloseEvent
 from database.sqlite_connection import SQLiteConnection
 from core.models import Worksheet
 from database.repositories import WorksheetRepository
@@ -19,13 +21,21 @@ from ui.screens.login_screen import LoginScreen
 from services.login_api import load_session, save_session, clear_session
 
 
+def _get_app_root():
+    """config·DB 경로의 기준 폴더. exe 실행 시에는 exe가 있는 폴더, 개발 시에는 프로젝트 루트."""
+    if getattr(sys, "frozen", False):
+        return os.path.dirname(sys.executable)
+    return os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+
 class MainWindow(QMainWindow):
     """메인 윈도우"""
     
     def __init__(self):
         super().__init__()
-        # DB 연결 (SQLite 단일 파일)
-        config_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "config", "config.json")
+        root = _get_app_root()
+        # DB 연결 (SQLite 단일 파일). config는 root 기준으로 로드
+        config_path = os.path.join(root, "config", "config.json")
         db_path = "./db/ch_lms.db"
         try:
             with open(config_path, "r", encoding="utf-8") as f:
@@ -33,18 +43,24 @@ class MainWindow(QMainWindow):
             db_path = (cfg.get("database") or {}).get("path") or db_path
         except Exception:
             pass
-        root = os.path.dirname(os.path.dirname(__file__))
         if not os.path.isabs(db_path):
             db_path = os.path.join(root, db_path)
         self.db_connection = SQLiteConnection(db_path)
         self.db_connection.connect()
 
+        # 기본 경로 실패 시 쓰기 가능한 대체 경로로 재시도 (테스트 앱/권한 이슈 대응)
+        if not self.db_connection.is_connected():
+            fallback_base = os.environ.get("LOCALAPPDATA") or os.environ.get("TEMP") or os.path.expanduser("~")
+            fallback_path = os.path.join(fallback_base, "HanQ", "db", "ch_lms.db")
+            self.db_connection = SQLiteConnection(fallback_path)
+            self.db_connection.connect()
+
         if not self.db_connection.is_connected():
             QMessageBox.information(
                 self,
                 "DB 연결 실패",
-                "DB 파일에 연결할 수 없습니다.\n"
-                "일부 기능이 제한될 수 있습니다."
+                "로컬 DB 파일에 연결할 수 없습니다.\n"
+                "로그인은 가능하나, 워크시트·문제은행 등 일부 기능이 제한됩니다."
             )
 
         self.init_ui()
@@ -71,6 +87,11 @@ class MainWindow(QMainWindow):
             self.stacked_widget.setCurrentIndex(0)
         else:
             self.main_stack.setCurrentIndex(0)
+
+    def closeEvent(self, event: QCloseEvent) -> None:
+        """앱 종료 시 세션 삭제 → 다음 실행 시 로그인 화면부터 표시."""
+        clear_session()
+        event.accept()
 
     def _build_main_content(self):
         """로그인 성공 시 또는 세션 있을 때만 호출. 메인 콘텐츠(헤더+화면들) 생성 및 win32com 등 로드."""
