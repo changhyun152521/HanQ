@@ -11,30 +11,9 @@ import os
 from pathlib import Path
 from PyQt5.QtWidgets import QApplication
 from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QFont, QFontDatabase
+from PyQt5.QtGui import QFont
 from ui.main_window import MainWindow
 from ui.theme import apply_theme
-
-
-def _app_base_dir() -> str:
-    """앱 기준 디렉터리: 배포 시 exe 폴더, 개발 시 프로젝트 루트."""
-    if getattr(sys, "frozen", False):
-        return os.path.dirname(sys.executable)
-    return os.path.dirname(os.path.abspath(__file__))
-
-
-def _load_bundled_fonts() -> None:
-    """fonts 폴더의 TTF/OTF를 Qt에 등록해 앱 전역에서 사용 가능하게 합니다."""
-    fonts_dir = os.path.join(_app_base_dir(), "fonts")
-    if not os.path.isdir(fonts_dir):
-        return
-    for name in os.listdir(fonts_dir):
-        if name.lower().endswith((".ttf", ".otf")):
-            path = os.path.join(fonts_dir, name)
-            try:
-                QFontDatabase.addApplicationFont(path)
-            except Exception:
-                pass
 
 
 def main():
@@ -69,7 +48,6 @@ def main():
     QApplication.setAttribute(Qt.AA_UseHighDpiPixmaps, True)
 
     app = QApplication(sys.argv)
-    _load_bundled_fonts()
     apply_theme(app)
     
     # 애플리케이션 정보 설정

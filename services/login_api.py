@@ -107,7 +107,7 @@ def login(user_id: str, password: str) -> Dict[str, Any]:
         return {"success": False, "message": "config.json에 로그인 API 주소(base_url)를 설정해 주세요."}
     url = f"{base}/login.php"
     try:
-        r = requests.post(url, json={"user_id": user_id, "password": password}, timeout=30)
+        r = requests.post(url, json={"user_id": user_id, "password": password}, timeout=10)
         r.encoding = "utf-8"
         data, err = _parse_json_response(r, url)
         if err:
@@ -133,7 +133,7 @@ def list_users() -> Dict[str, Any]:
         return {"success": False, "message": "config.json에 로그인 API 주소를 설정해 주세요.", "users": []}
     url = f"{base}/list_users.php"
     try:
-        r = requests.get(url, timeout=30)
+        r = requests.get(url, timeout=10)
         r.encoding = "utf-8"
         data, err = _parse_json_response(r, url)
         if err:
@@ -159,7 +159,7 @@ def add_user(user_id: str, password: str, name: str) -> Dict[str, Any]:
         return {"success": False, "message": "config.json에 로그인 API 주소를 설정해 주세요."}
     url = f"{base}/add_user.php"
     try:
-        r = requests.post(url, json={"user_id": user_id, "password": password, "name": name or user_id}, timeout=30)
+        r = requests.post(url, json={"user_id": user_id, "password": password, "name": name or user_id}, timeout=10)
         r.encoding = "utf-8"
         data, err = _parse_json_response(r, url)
         if err:
@@ -198,7 +198,7 @@ def update_user(
     if new_password is not None:
         payload["new_password"] = new_password
     try:
-        r = requests.post(url, json=payload, timeout=30)
+        r = requests.post(url, json=payload, timeout=10)
         r.encoding = "utf-8"
         data, err = _parse_json_response(r, url)
         if err:
@@ -246,7 +246,7 @@ def admin_update_user(
     if new_password is not None:
         payload["new_password"] = new_password
     try:
-        r = requests.post(url, json=payload, timeout=30)
+        r = requests.post(url, json=payload, timeout=10)
         r.encoding = "utf-8"
         data, err = _parse_json_response(r, url)
         if err:
@@ -279,7 +279,7 @@ def delete_user(admin_user_id: str, admin_password: str, target_user_id: str) ->
                 "admin_password": admin_password,
                 "target_user_id": target_user_id,
             },
-            timeout=30,
+            timeout=10,
         )
         r.encoding = "utf-8"
         data, err = _parse_json_response(r, url)

@@ -43,7 +43,6 @@ a = Analysis(
     datas=[
         ('config', 'config'),       # config.json, tag_schema.json
         ('templates', 'templates'), # 워크시트 템플릿 등
-        ('fonts', 'fonts'),         # Pretendard, GmarketSans, NanumGothic 등 UI/템플릿용 글꼴
     ],
     hiddenimports=[
         'PyQt5.QtCore',
